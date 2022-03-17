@@ -28,9 +28,9 @@ const relevantEvents = new Set([
     'customer.subscription.deleted',
 ])
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-    
-    if (req.method == 'POST'){
+export default async (req: NextApiRequest, res: NextApiResponse) => {    
+
+    if (req.method === 'POST'){
         const buf = await buffer(req);
         const secret = req.headers['stripe-signature']
 
@@ -42,7 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(400).send(`Webhook Error: ${err.message}`);
         }   
         
-        const { type } = event;
+        const { type } = event;       
 
         if (relevantEvents.has(type)){
 
@@ -62,7 +62,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         break;
 
                     case 'checkout.session.completed':
-
+                                                
                         const checkoutSession = event.data.object as Stripe.Checkout.Session
                             
                         await saveSubscription(
@@ -77,6 +77,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     }                
                 } 
             catch (err){
+                    console.log(err)
                     return res.json({error: 'Webhook handler failed'})
                 }
             }

@@ -6,8 +6,7 @@ export async function saveSubscription(
     subscriptionId: string,
     customerId: string,
     createAction: boolean,
-){
-    console.log('agora vamos criar em?!?!')
+){    
     //searching the user in the Fauna DB by the customer ID
     //and getting the "ref" field data
     const userRef = await fauna.query(
