@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import styles from './styles.module.scss';
 import { createClient } from '../../../prismicio';
+import Link from 'next/link';
 
 type Post = {
     slug: string;
@@ -28,11 +29,16 @@ return(
 
         {posts.map(post => (
 
-            <a key={post.slug} href='#'>
-                <time>{post.updatedAt}</time>
-                <strong>{post.title}</strong>
-                <p>{post.excerpt}</p>
-            </a>
+            <Link href={`/posts/${post.slug}`}>
+
+                <a key={post.slug} href='#'>
+                    <time>{post.updatedAt}</time>
+                    <strong>{post.title}</strong>
+                    <p>{post.excerpt}</p>
+                </a>
+            
+            </Link>
+            
         ))}
         
 
