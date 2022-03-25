@@ -1,5 +1,6 @@
-import { GetServerSideProps } from "next"
-import { getSession } from "next-auth/react"
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
+import { RichText }  from 'prismic-dom';
 import Head from "next/head";
 import { createClient } from '../../../prismicio';
 
@@ -12,18 +13,27 @@ interface PostProps{
     }
 }
 
+import styles from './post.module.scss'
 
-export default function Post({ post }: PostProps) {
+export default function Post({post} : PostProps) {
 
     console.log(post)
 
     return(
         <>
         <Head>
-            <title>IgNews</title>
+            <title>{post.title} | IgNews</title>
         </Head>
 
-
+        <main className={styles.container}>
+            <article className={styles.post}>
+                <h1>{post.title}</h1>
+                <time>{post.updatedAt}</time>
+                <div 
+                    className={styles.postContent}
+                    dangerouslySetInnerHTML={{ __html: post.content }} />
+            </article>
+        </main>        
         </>
     )
 }
@@ -31,7 +41,7 @@ export default function Post({ post }: PostProps) {
 //nao pode ser uma pagina estatica porque nao seria protegida
 //como o user precisa estar autenticado, usarei GetServerSideProps
 
-export async function GetServerSideProps({ req, params }){
+export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
 
     //gets cookies from the req to check if user is loggedIn
     const session = await getSession( { req } );
@@ -42,15 +52,14 @@ export async function GetServerSideProps({ req, params }){
 
     // }
 
-    const prismic = createClient();
+    const prismic = createClient(req);
 
     const response = await prismic.getByUID('Posts', 'aprendendo-reactjs-em-2022');
-    
-
+   
     const post = {
         slug,
-        title: response.data.title,
-        content: response.data.content,
+        title: RichText.asText(response.data.title),
+        content: RichText.asHtml(response.data.content),
         updatedAt: new Date(response.last_publication_date).toLocaleDateString('pt-br', {
             day: '2-digit',
             month: 'long',
