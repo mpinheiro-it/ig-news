@@ -17,8 +17,6 @@ import styles from './post.module.scss'
 
 export default function Post({post} : PostProps) {
 
-    console.log(post)
-
     return(
         <>
         <Head>
@@ -48,10 +46,10 @@ export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
     
     const { slug } = params;
     
-    if(!session.activeSubscription) {
+    if(!session?.activeSubscription) {
         return {
             redirect: {
-                destination: '/',
+                destination: `/posts/preview/${slug}`,
                 permanent: false,
             }
         }
@@ -59,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, params}) => {
 
     const prismic = createClient(req);
 
-    const response = await prismic.getByUID('Posts', 'aprendendo-reactjs-em-2022');
+    const response = await prismic.getByUID('Posts', String(slug), {});
    
     const post = {
         slug,
