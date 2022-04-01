@@ -29,7 +29,7 @@ return(
 
         {posts.map(post => (
 
-            <Link href={`/posts/${post.slug}`}>
+            <Link key={post.slug} href={`/posts/${post.slug}`}>
 
                 <a key={post.slug} href='#'>
                     <time>{post.updatedAt}</time>
